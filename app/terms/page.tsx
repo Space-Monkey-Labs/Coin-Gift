@@ -32,7 +32,7 @@ export default function TermsPage() {
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">5. Disclaimers</h2>
         <p className="mb-4">
-          CoinGift is provided "as is" without any warranties. We do not guarantee the value of cryptocurrencies or the availability of the service.
+          CoinGift is provided &quot;as is&quot; without any warranties. We do not guarantee the value of cryptocurrencies or the availability of the service.
         </p>
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">6. Contact</h2>
