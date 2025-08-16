@@ -4,25 +4,57 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-CoinGift is a cryptocurrency gift card platform that allows users to create, send, and redeem crypto gift cards. This is a React/TypeScript-based frontend prototype focused on the landing page and UI components.
+CoinGift is a cryptocurrency gift card platform that allows users to create, send, and redeem crypto gift cards. This is a full-stack Next.js application with authentication, database integration, and crypto functionality.
 
 ## Technology Stack
 
-- **Frontend Framework**: React with TypeScript
-- **Styling**: Tailwind CSS with shadcn/ui components 
-- **Animations**: Motion (Framer Motion)
-- **UI Components**: shadcn/ui component library
+- **Framework**: Next.js 14 with App Router and TypeScript
+- **Database**: PostgreSQL with Prisma ORM
+- **Authentication**: NextAuth.js with Google and Coinbase OAuth providers
+- **Styling**: Tailwind CSS with shadcn/ui component library
+- **Animations**: Framer Motion
+- **State Management**: Zustand
+- **Email**: React Email with Resend
+- **File Uploads**: UploadThing
+- **Forms**: React Hook Form with Zod validation
 - **Icons**: Lucide React
 - **CSS Variables**: Custom design system tokens defined in globals.css
 
+## Development Commands
+
+- `npm run dev` - Start development server on port 3000
+- `npm run build` - Build production bundle
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run type-check` - Run TypeScript type checking (no emit)
+- `npm run db:generate` - Generate Prisma client
+- `npm run db:push` - Push Prisma schema to database
+- `npm run db:studio` - Open Prisma Studio database GUI
+- `npm run email:dev` - Start React Email development server on port 3001
+
 ## Architecture & Structure
 
-### Component Architecture
-The application follows a component-based architecture with:
+### Application Architecture
+The application uses Next.js App Router with the following structure:
 
-- **Main App Component** (`App.tsx`): Simple layout with Header, main sections, and Footer
-- **Section Components**: Modular landing page sections (HeroSection, FeaturesSection, etc.)
-- **UI Components**: Reusable shadcn/ui components in `components/ui/`
+- **App Router** (`app/`): Next.js 14 App Router for file-based routing
+- **Route Groups**: `(auth)` for authentication pages, `(dashboard)` for protected routes
+- **API Routes** (`app/api/`): Server-side API endpoints including NextAuth configuration
+- **Database Layer**: Prisma ORM with PostgreSQL for data persistence
+- **Authentication**: NextAuth.js with JWT strategy and OAuth providers (Google, Coinbase)
+
+### Data Models
+Key database models defined in `prisma/schema.prisma`:
+
+- **User**: User accounts with Coinbase integration (coinbaseId, walletAddress)
+- **GiftCard**: Core gift card entity with crypto amounts, themes, status lifecycle
+- **Transaction**: Blockchain transaction tracking with gas fees and confirmation status
+- **Account/Session**: NextAuth.js models for OAuth and session management
+
+### Component Architecture
+- **Landing Page Components**: Modular sections (HeroSection, FeaturesSection, etc.)
+- **UI Components**: Complete shadcn/ui component library in `components/ui/`
+- **Auth Components**: SignInForm, SignUpForm with form validation
 - **Specialized Components**: Custom components like `GiftCard3D` for crypto-specific functionality
 
 ### Key Components
@@ -88,22 +120,53 @@ This appears to be a prototype/MVP implementation focusing on the frontend prese
 - Mobile-responsive design
 - Trust-building elements for crypto adoption
 
+## Database Operations
+
+When working with the database:
+- Always run `npm run db:generate` after modifying `prisma/schema.prisma`
+- Use `npm run db:push` to apply schema changes to development database
+- Use `npm run db:studio` to inspect and modify database data via GUI
+- Database client is configured in `lib/db.ts`
+
+## Authentication Flow
+
+The app uses NextAuth.js with:
+- **Google OAuth**: Standard Google sign-in flow
+- **Coinbase OAuth**: Custom provider for crypto wallet integration
+- **Session Strategy**: JWT-based sessions with custom callbacks
+- **Pages**: Custom auth pages in `app/(auth)/` route group
+- Configuration in `lib/auth.ts` with Prisma adapter
+
+## Environment Setup
+
+Required environment variables (see README.md):
+- `DATABASE_URL`: PostgreSQL connection string
+- `NEXTAUTH_SECRET`: JWT secret for session encryption
+- `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`: Google OAuth credentials
+- `COINBASE_CLIENT_ID` / `COINBASE_CLIENT_SECRET`: Coinbase OAuth credentials
+
 ## File Organization
 
 ```
 /
-├── App.tsx                 # Main application component
+├── app/                    # Next.js App Router
+│   ├── (auth)/            # Authentication route group
+│   ├── (dashboard)/       # Protected dashboard routes
+│   ├── api/               # API routes (NextAuth, etc.)
+│   ├── layout.tsx         # Root layout
+│   └── page.tsx           # Landing page
 ├── components/
-│   ├── ui/                # shadcn/ui components
-│   ├── figma/             # Figma-exported components
-│   ├── GiftCard3D.tsx     # 3D animated gift card
-│   ├── HeroSection.tsx    # Landing page hero
-│   ├── FeaturesSection.tsx # Features showcase
-│   └── [other sections]   # Additional landing page sections
+│   ├── ui/               # shadcn/ui component library
+│   ├── auth/             # Authentication forms
+│   └── [sections]        # Landing page sections
+├── lib/                  # Utility functions
+│   ├── auth.ts           # NextAuth configuration
+│   └── db.ts             # Database client
+├── prisma/
+│   └── schema.prisma     # Database schema
 ├── styles/
-│   └── globals.css        # Global styles and design system
-└── guidelines/
-    └── Guidelines.md      # Template development guidelines
+│   └── globals.css       # Global styles and design system
+└── types/                # TypeScript type definitions
 ```
 
 ## Design Principles
